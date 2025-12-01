@@ -20,6 +20,7 @@ macro_rules! register_days {
 register_days!(day1);
 
 fn main() {
+    env_logger::init();
     let mut failed = false;
     let solutions: std::collections::HashMap<_, _> = NAME_TO_FN.iter().cloned().collect();
     for arg in env::args().skip(1) {

@@ -1,5 +1,7 @@
 use regex::Regex;
 
+use log::debug;
+
 use crate::parsing::read_regex_records;
 
 #[derive(Debug)]
@@ -50,13 +52,13 @@ fn count_clicks(from_pos: i32, offset: i32) -> (i32, i32) {
 
     // Does that remaining offset cross zero?
     let new_signed_pos = from_pos + remaining_offset;
-    println!(
+    debug!(
         "From pos {} offset {} new pos {}",
         from_pos, remaining_offset, new_signed_pos
     );
     #[allow(clippy::nonminimal_bool)] // For clarity.
     if (from_pos > 0 && new_signed_pos <= 0) || (from_pos > 0 && new_signed_pos >= DIAL_SIZE) {
-        println!("Crossed zero");
+        debug!("Crossed zero");
         zero_arrivals += 1;
     }
 
@@ -70,7 +72,7 @@ pub fn day1(source: Option<String>) -> (i32, i32) {
     let mut zero_visits = 0;
     let mut zero_passes = 0;
     for record in records {
-        println!("Record: {:?} ", record);
+        debug!("Record: {:?} ", record);
         match record.direction {
             Lr::Left => {
                 let (zero_visits_inc, zero_passes_inc) = count_clicks(position, -record.distance);
@@ -85,7 +87,7 @@ pub fn day1(source: Option<String>) -> (i32, i32) {
                 position = (position + record.distance).rem_euclid(DIAL_SIZE);
             }
         }
-        println!("Position: {}", position);
+        debug!("Position: {}", position);
     }
     (zero_visits, zero_passes)
 }
