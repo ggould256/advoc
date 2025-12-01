@@ -3,8 +3,6 @@ use std::env;
 mod day1;
 
 mod parsing;
-//mod grid_board;
-mod astar;
 
 fn main() {
     for arg in env::args().skip(1) {
