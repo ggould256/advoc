@@ -1,6 +1,6 @@
 use regex::Regex;
 
-use log::{debug, info};
+use log::debug;
 
 use crate::parsing::read_regex_records;
 
@@ -105,6 +105,7 @@ mod tests {
     use super::*;
 
     use const_format::concatcp;
+    use log::info;
     use std::fs::File;
 
     const DAY: &str = "1";
