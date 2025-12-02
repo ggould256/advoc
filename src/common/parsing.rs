@@ -41,7 +41,6 @@ pub fn read_one_string(source: Option<String>) -> String {
 }
 
 /// Reads lines from `source` and returns them as a vector of strings.
-#[expect(unused)]
 pub fn read_lines(source: Option<String>) -> Vec<String> {
     match source {
         None => std::io::stdin()
