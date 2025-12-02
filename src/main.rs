@@ -16,8 +16,8 @@ struct Args {
     source: Option<String>,
 }
 
-
-const YEAR_TO_FN: &[(usize, for<'a> fn(&'a str, Option<std::string::String>) -> i64)] = &[
+type SolutionLocatorFn = for<'a> fn(&'a str, Option<std::string::String>) -> i64;
+const YEAR_TO_FN: &[(usize, SolutionLocatorFn)] = &[
     (2015, year_2015::run_solution),
     (2025, year_2025::run_solution),
 ];

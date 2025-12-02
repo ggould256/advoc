@@ -1,8 +1,3 @@
-use nalgebra::base;
-use regex::Regex;
-
-use log::debug;
-
 use crate::common::parsing::read_one_string;
 
 #[derive(Debug)]
@@ -32,7 +27,7 @@ pub fn day1(source: Option<String>) -> (i64, i64) {
             Ud::Up => { final_floor += 1; }
             Ud::Down => { final_floor -= 1; }
         }
-        if final_floor < 0 && basement_time == None {
+        if final_floor < 0 && basement_time.is_none() {
             basement_time = Some(index as i64 + 1);
         }
     }
