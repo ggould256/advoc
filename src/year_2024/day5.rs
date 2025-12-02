@@ -83,7 +83,7 @@ pub fn day5(source: Option<String>) -> i64 {
     let updates = read_updates(&lines);
     let valid_updates = updates.iter().filter(|&u| valid_update(u, &rules));
     let total: u32 = valid_updates.map(|u| middle_element(u)).sum();
-    i64::try_from(total).unwrap()
+    i64::from(total)
 }
 
 pub fn day5b(source: Option<String>) -> i64 {
@@ -93,7 +93,7 @@ pub fn day5b(source: Option<String>) -> i64 {
     let invalid_updates = updates.iter().filter(|&u| !valid_update(u, &rules));
     let newly_valid_updates = invalid_updates.map(|u| fix_update(u, &rules));
     let total: u32 = newly_valid_updates.map(|u| middle_element(&u)).sum();
-    i64::try_from(total).unwrap()
+    i64::from(total)
 }
 
 #[cfg(test)]

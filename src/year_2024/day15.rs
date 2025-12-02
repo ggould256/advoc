@@ -12,7 +12,7 @@ enum BoardContent {
 }
 
 impl BoardContent {
-    pub fn to_char(&self) -> char {
+    pub fn to_char(self) -> char {
         match self {
             BoardContent::Crate => 'O',
             BoardContent::BoxLeft => '[',
@@ -50,7 +50,7 @@ enum Direction {
 }
 
 impl Direction {
-    pub fn to_char(&self) -> char {
+    pub fn to_char(self) -> char {
         match self {
             Direction::North => '^',
             Direction::East => '>',
@@ -59,7 +59,7 @@ impl Direction {
         }
     }
 
-    pub fn to_offset(&self) -> Xy {
+    pub fn to_offset(self) -> Xy {
         match self {
             Direction::North => Xy::new(0, -1),
             Direction::East => Xy::new(1, 0),
@@ -106,7 +106,7 @@ impl Board {
         let mut result = Board{board:Vec::new(), robot_location:Xy::new(-1, -1)};
         for (y, row_string) in strings.iter().enumerate() {
             if wide {
-                result.board.push(row_string.chars().map(BoardContent::from_char_wide).flatten().collect());
+                result.board.push(row_string.chars().flat_map(BoardContent::from_char_wide).collect());
             } else {
                 result.board.push(row_string.chars().map(BoardContent::from_char).collect());
             }
@@ -125,7 +125,7 @@ impl Board {
             for (x, c) in row.iter().enumerate() {
                 let x = x as Scalar;
                 let y = y as Scalar;
-                if vec![BoardContent::BoxLeft, BoardContent::Crate].contains(c) {
+                if [BoardContent::BoxLeft, BoardContent::Crate].contains(c) {
                     result += y * 100 + x;
                 }
             }

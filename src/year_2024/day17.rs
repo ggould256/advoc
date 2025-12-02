@@ -30,7 +30,7 @@ struct VmState {
 }
 
 impl VmState {
-    fn from_record(record: &Vec<String>) -> VmState {
+    fn from_record(record: &[String]) -> VmState {
         let a: RegVal = record[1].parse().unwrap();
         let b: RegVal = record[2].parse().unwrap();
         let c: RegVal = record[3].parse().unwrap();
@@ -43,7 +43,8 @@ impl VmState {
     }
 
     fn resolve_combo(&self, operand: ThreeBit) -> Option<RegVal> {
-        let result = {
+        
+        {
             if operand <= 3 {
                 Some(operand as RegVal)
             } else if operand < 7 {
@@ -51,8 +52,7 @@ impl VmState {
             } else {
                 None
             }
-        };
-        result
+        }
     }
 
     fn do_dv(&self, pow: RegVal) -> RegVal{
@@ -63,7 +63,7 @@ impl VmState {
         let mut new_state = self.clone();
         if self.halted { return new_state; }
         let instruction = INSTRUCTIONS[self.program[self.instruction_pointer] as usize];
-        let operand = self.program[self.instruction_pointer + 1 as usize];
+        let operand = self.program[self.instruction_pointer + 1_usize];
         let mut jumped = false;
         match instruction {
             Iadv => {
@@ -72,7 +72,7 @@ impl VmState {
                 } else { new_state.halted = true; }
             },
             Ibxl => {
-                new_state.registers[1] = new_state.registers[1] ^ (operand as RegVal);
+                new_state.registers[1] ^= operand as RegVal;
             },
             Ibst => {
                 if let Some(new) = new_state.resolve_combo(operand) {
@@ -120,7 +120,7 @@ impl VmState {
         vm_state.output_so_far
     }
 
-    fn expect_output(&self, expected_output: &Vec<RegVal>) -> bool {
+    fn expect_output(&self, expected_output: &[RegVal]) -> bool {
         let mut vm_state = self.clone();
         while !vm_state.halted {
             vm_state = vm_state.advance_state();

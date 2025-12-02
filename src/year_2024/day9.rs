@@ -126,7 +126,7 @@ fn score(rle: &RleList) -> i64 {
     let mut pos: Scalar = 0;
     for item in rle {
         for _ in 0..item.length {
-            result += i64::from(item.id.unwrap_or_default() * pos);
+            result += item.id.unwrap_or_default() * pos;
             pos += 1;
         }
     }
