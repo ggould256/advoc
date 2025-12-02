@@ -1,4 +1,4 @@
-use crate::parsing::{parse_as_i32s, read_all_records};
+use crate::common::parsing::{parse_as_i32s, read_all_records};
 
 fn record_is_safe(record: &[i32]) -> bool {
     let differences: Vec<i32> = (0..record.len() - 1)
@@ -61,23 +61,23 @@ mod tests {
 
     #[test]
     fn test_example() {
-        assert_eq!(day2(Some("data/day2_example.txt".to_string())), 2);
+        assert_eq!(day2(Some("data/2024/day2_example.txt".to_string())), 2);
     }
 
     #[test]
     #[ignore = "requires input not in repository"]
     fn test_test() {
-        assert_eq!(day2(Some("inputs/day2_test.txt".to_string())), 516);
+        assert_eq!(day2(Some("inputs/2024/day2_test.txt".to_string())), 516);
     }
 
     #[test]
     fn test_example_b() {
-        assert_eq!(day2b(Some("data/day2_example.txt".to_string())), 4);
+        assert_eq!(day2b(Some("data/2024/day2_example.txt".to_string())), 4);
     }
 
     #[test]
     #[ignore = "requires input not in repository"]
     fn test_test_b() {
-        assert_eq!(day2b(Some("inputs/day2_test.txt".to_string())), 561);
+        assert_eq!(day2b(Some("inputs/2024/day2_test.txt".to_string())), 561);
     }
 }

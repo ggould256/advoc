@@ -56,7 +56,6 @@ pub fn read_lines(source: Option<String>) -> Vec<String> {
 }
 
 /// Reads lines from `source` and splits each line into fields using whitespace.
-#[expect(unused)]
 pub fn read_all_records(source: Option<String>) -> Vec<Vec<String>> {
     match source {
         None => read_all_records_from_readable(std::io::stdin().lock()),
@@ -78,7 +77,6 @@ where
 }
 
 /// Parses a vector of string records into a vector of (i32, i32) tuples.
-#[expect(unused)]
 pub fn parse_as_ii(input: Vec<Vec<String>>) -> Vec<(i32, i32)> {
     let mut result: Vec<(i32, i32)> = Vec::<(i32, i32)>::new();
     for input_record in input {
@@ -93,7 +91,6 @@ pub fn parse_as_ii(input: Vec<Vec<String>>) -> Vec<(i32, i32)> {
 }
 
 /// Parses the output of `read_all_records` as i32 values.
-#[expect(unused)]
 pub fn parse_as_i32s(input: Vec<Vec<String>>) -> Vec<Vec<i32>> {
     let mut result: Vec<Vec<i32>> = Vec::new();
     for input_record in input {
