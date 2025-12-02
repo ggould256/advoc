@@ -109,10 +109,10 @@ mod tests {
     use std::fs::File;
 
     const DAY: &str = "1";
-    const EXAMPLE_A_DATA: &str = concatcp!("data/day", DAY, "a_example.txt");
-    const EXAMPLE_B_DATA: &str = concatcp!("data/day", DAY, "a_example.txt");
-    const INPUT_A_DATA: &str = concatcp!("inputs/day", DAY, "a_test.txt");
-    const INPUT_B_DATA: &str = concatcp!("inputs/day", DAY, "a_test.txt");
+    const EXAMPLE_A_DATA: &str = concatcp!("data/2025/day", DAY, "a_example.txt");
+    const EXAMPLE_B_DATA: &str = concatcp!("data/2025/day", DAY, "a_example.txt");
+    const INPUT_A_DATA: &str = concatcp!("inputs/2025/day", DAY, "a_test.txt");
+    const INPUT_B_DATA: &str = concatcp!("inputs/2025/day", DAY, "a_test.txt");
 
     #[test]
     fn test_example_1() {

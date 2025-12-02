@@ -1,4 +1,5 @@
 mod common;
+mod year_2015;
 mod year_2025;
 
 use clap::Parser;
@@ -16,8 +17,9 @@ struct Args {
 }
 
 
-const YEAR_TO_FN: &[(usize, for<'a> fn(&'a str, Option<std::string::String>) -> i64); 1] = &[
-    (2025, year_2025::run_test),
+const YEAR_TO_FN: &[(usize, for<'a> fn(&'a str, Option<std::string::String>) -> i64)] = &[
+    (2015, year_2015::run_solution),
+    (2025, year_2025::run_solution),
 ];
 
 
