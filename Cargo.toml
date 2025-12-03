@@ -16,3 +16,4 @@ log = "~0.4"
 env_logger = "~0.11"
 clap = { version = "4.5.53", features = ["derive"] }
 md5 = "~0.8"
+fancy-regex = "0.16.2"
