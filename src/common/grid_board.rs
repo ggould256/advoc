@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::fmt::Debug;
 use nalgebra::Vector2;
 
@@ -74,8 +76,26 @@ impl<BoardContent> Board<BoardContent>
     pub fn width(&self) -> usize { self.board[0].len() }
     pub fn dimensions(&self) -> Xy {Xy::new(self.width() as Scalar, self.height() as Scalar)}
 
+    pub fn all_coords(&self) -> Vec<Xy> {
+        let mut result = Vec::new();
+        for y in 0..self.height() {
+            for x in 0..self.width() {
+                result.push(Xy::new(x as Scalar, y as Scalar));
+            }
+        }
+        result
+    }
+
     pub fn at(&self, xy: Xy) -> BoardContent {
         self.board[xy[1] as usize][xy[0]as usize]
+    }
+
+    pub fn maybe_at(&self, xy: Xy) -> Option<BoardContent> {
+        if xy[0] < 0 || xy[0] >= self.width() as Scalar || xy[1] < 0 || xy[1] >= self.height() as Scalar {
+            None
+        } else {
+            Some(self.board[xy[1] as usize][xy[0] as usize])
+        }
     }
 
     pub fn set_at(&mut self, xy: Xy, c: BoardContent) {
@@ -96,5 +116,31 @@ impl<BoardContent> Board<BoardContent>
             result.board.push(row_string.chars().map(|c| BoardContent::try_from(c).unwrap()).collect());
         }
         result
+    }
+
+    pub fn neighbors(&self) -> Vec<BoardContent> {
+        let mut result = Vec::new();
+        for dir in Direction::ALL.iter() {
+            let offset = dir.to_offset();
+            match self.maybe_at(offset) {
+                Some(c) => result.push(c),
+                None => {}
+            }
+        }
+        result        
+    }
+
+    pub fn neighbors8(&self, loc: Xy) -> Vec<BoardContent> {
+        let mut result = Vec::new();
+        let dirs8: Vec<Xy> = vec![
+            Xy::new(1, 0), Xy::new(1, 1), Xy::new(0, 1), Xy::new(-1, 1),
+            Xy::new(-1, 0), Xy::new(-1, -1), Xy::new(0, -1), Xy::new(1, -1)];
+        for &offset in dirs8.iter() {
+            match self.maybe_at(loc + offset) {
+                Some(c) => result.push(c),
+                None => {}
+            }
+        }
+        result        
     }
 }
