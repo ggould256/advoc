@@ -146,9 +146,8 @@ where
         let mut result = Vec::new();
         for dir in Direction::ALL.iter() {
             let offset = dir.to_offset();
-            match self.maybe_at(offset) {
-                Some(c) => result.push(c),
-                None => {}
+            if let Some(c) = self.maybe_at(offset) {
+                result.push(c);
             }
         }
         result
@@ -167,9 +166,8 @@ where
             Xy::new(1, -1),
         ];
         for &offset in dirs8.iter() {
-            match self.maybe_at(loc + offset) {
-                Some(c) => result.push(c),
-                None => {}
+            if let Some(c) = self.maybe_at(loc + offset) {
+                result.push(c);
             }
         }
         result
