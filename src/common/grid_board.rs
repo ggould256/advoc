@@ -73,7 +73,7 @@ impl Direction {
 
 #[derive(Debug, Clone)]
 pub struct Board<BoardContent> {
-    board: Vec<Vec<BoardContent>>,
+    pub(crate) board: Vec<Vec<BoardContent>>,
 }
 
 impl<BoardContent> Board<BoardContent>
@@ -119,6 +119,23 @@ where
 
     pub fn set_at(&mut self, xy: Xy, c: BoardContent) {
         self.board[xy[1] as usize][xy[0] as usize] = c;
+    }
+
+    pub fn fill_rect(&mut self, ul: Xy, br: Xy, c: BoardContent) {
+        for y in ul[1]..br[1] {
+            self.board[y as usize][ul[0] as usize..br[0] as usize].fill(c);
+        }
+    }
+
+    pub fn update_rect(&mut self, ul: Xy, br: Xy, f: impl Fn(BoardContent) -> BoardContent) {
+        for y in ul[1]..br[1] {
+            for x in ul[0]..br[0] {
+                let xy = Xy::new(x, y);
+                let old_value = self.at(xy);
+                let new_value = f(old_value);
+                self.set_at(xy, new_value);
+            }
+        }
     }
 
     pub fn to_strings(&self) -> Vec<String> {
@@ -171,5 +188,40 @@ where
             }
         }
         result
+    }
+
+    pub fn iter(&self) -> BoardIterator<BoardContent> {
+        BoardIterator {
+            board: self,
+            current_x: 0,
+            current_y: 0,
+        }
+    }
+}
+
+pub struct BoardIterator<'a, BoardContent> {
+    board: &'a Board<BoardContent>,
+    current_x: usize,
+    current_y: usize,
+}
+impl<BoardContent> Iterator for BoardIterator<'_, BoardContent>
+where
+    BoardContent: Copy + Debug + ToString,
+    BoardContent: TryFrom<char, Error: Debug>,
+{
+    type Item = (Xy, BoardContent);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.current_y >= self.board.height() {
+            return None;
+        }
+        let xy = Xy::new(self.current_x as Scalar, self.current_y as Scalar);
+        let content = self.board.at(xy);
+        self.current_x += 1;
+        if self.current_x >= self.board.width() {
+            self.current_x = 0;
+            self.current_y += 1;
+        }
+        Some((xy, content))
     }
 }
