@@ -1,4 +1,4 @@
-use std::{clone, collections::HashMap, fmt::Display};
+use std::collections::HashMap;
 
 use log::debug;
 
@@ -47,7 +47,7 @@ fn read_input(source: Option<String>) -> Vec<Node> {
     let lines = read_all_records(source);
     let mut nodes: Vec<Node> = Vec::new();
     for line in lines {
-        if line.len() == 0 {
+        if line.is_empty() {
             continue;
         }
         if line[0] == "NOT" {
@@ -68,10 +68,10 @@ fn read_input(source: Option<String>) -> Vec<Node> {
         }
         else {
             nodes.push(Node{
-                output: line[2].to_string(),
+                output: line[4].to_string(),
                 input: Value::from(line[0].as_str()),
                 op: Op::from(line[1].as_str()),
-                extra_input: None,
+                extra_input: Some(Value::from(line[2].as_str())),
             });
         }
     }
@@ -79,10 +79,11 @@ fn read_input(source: Option<String>) -> Vec<Node> {
 }
 
 /// For any given signal, find the node that outputs that signal.
-fn labels_to_sources(nodes: &Vec<Node>) -> HashMap<Label, usize> {
+fn labels_to_sources(nodes: &[Node]) -> HashMap<Label, usize> {
     let mut sources: HashMap<Label, usize> = HashMap::new();
     for (i, node) in nodes.iter().enumerate() {
         if sources.contains_key(&node.output) {
+            debug!("{:?} vs {:?}", node, nodes[sources[&node.output]]);
             panic!("Multiple sources for signal {}", node.output);
         }
         sources.insert(node.output.clone(), i);
@@ -92,31 +93,33 @@ fn labels_to_sources(nodes: &Vec<Node>) -> HashMap<Label, usize> {
 
 fn compute_value(value: &Value, nodes: &Vec<Node>,
                  labels_to_signals: &mut HashMap<Label, Signal>)  -> Signal {
-    let mut labels_to_signals = HashMap::<Label, Signal>::new();
     let sources = labels_to_sources(nodes);
     let computed_value: Signal = match value {
         Value::Literal(l) => *l,
         Value::Label(l) => {
             if labels_to_signals.contains_key(l) {
+                debug!("Cache hit: {} -> {}", l, labels_to_signals[l]);
                 labels_to_signals[l]
             } else {
+                debug!("Cache miss; computing value for {:?}", value);
                 let source_node = &nodes[sources[l]];
                 match source_node.op {
-                    Op::Nop => compute_value(&source_node.input, nodes, &mut labels_to_signals),
-                    Op::Not => !compute_value(&source_node.input, nodes, &mut labels_to_signals),  // Rust `!` is bitwise.
-                    Op::And => compute_value(&source_node.input, nodes, &mut labels_to_signals)
-                               & compute_value(&source_node.extra_input.clone().unwrap(), nodes, &mut labels_to_signals),
-                    Op::Or => compute_value(&source_node.input, nodes, &mut labels_to_signals)
-                              | compute_value(&source_node.extra_input.clone().unwrap(), nodes, &mut labels_to_signals),
-                    Op::Lshift => compute_value(&source_node.input, nodes, &mut labels_to_signals)
-                              << compute_value(&source_node.extra_input.clone().unwrap(), nodes, &mut labels_to_signals),
-                    Op::Rshift => compute_value(&source_node.input, nodes, &mut labels_to_signals)
-                              >> compute_value(&source_node.extra_input.clone().unwrap(), nodes, &mut labels_to_signals),
+                    Op::Nop => compute_value(&source_node.input, nodes, labels_to_signals),
+                    Op::Not => !compute_value(&source_node.input, nodes, labels_to_signals),  // Rust `!` is bitwise.
+                    Op::And => compute_value(&source_node.input, nodes, labels_to_signals)
+                               & compute_value(&source_node.extra_input.clone().unwrap(), nodes, labels_to_signals),
+                    Op::Or => compute_value(&source_node.input, nodes, labels_to_signals)
+                              | compute_value(&source_node.extra_input.clone().unwrap(), nodes, labels_to_signals),
+                    Op::Lshift => compute_value(&source_node.input, nodes, labels_to_signals)
+                              << compute_value(&source_node.extra_input.clone().unwrap(), nodes, labels_to_signals),
+                    Op::Rshift => compute_value(&source_node.input, nodes, labels_to_signals)
+                              >> compute_value(&source_node.extra_input.clone().unwrap(), nodes, labels_to_signals),
                 }
             }   
         }
     };
     if let Value::Label(l) = value {
+        debug!("Caching {} -> {}", l, computed_value);
         labels_to_signals.insert(l.clone(), computed_value);
     }
     computed_value
@@ -127,7 +130,11 @@ fn solution(source: Option<String>) -> (i64, i64) {
     let cache = &mut HashMap::<Label, Signal>::new();
     let signal_a = compute_value(&Value::Label("a".to_string()), &nodes, cache);
 
-    (signal_a as i64, 0)
+    let cache = &mut HashMap::<Label, Signal>::new();
+    cache.insert("b".to_string(), signal_a);
+    let signal_b = compute_value(&Value::Label("a".to_string()), &nodes, cache);
+
+    (signal_a as i64, signal_b as i64)
 }
 
 pub fn solution_a(source: Option<String>) -> i64 {
@@ -146,7 +153,7 @@ mod tests {
     use log::info;
     use std::fs::File;
 
-    const DAY: &str = "6";
+    const DAY: &str = "7";
     const EXAMPLE_A_DATA: &str = concatcp!("data/2015/day", DAY, "a_example.txt");
     const EXAMPLE_B_DATA: &str = concatcp!("data/2015/day", DAY, "a_example.txt");
     const INPUT_A_DATA: &str = concatcp!("inputs/2015/day", DAY, "_test.txt");
@@ -154,7 +161,7 @@ mod tests {
 
     #[test]
     fn test_example_a() {
-        assert_eq!(solution_a(Some(EXAMPLE_A_DATA.to_string())), 998996);
+        assert_eq!(solution_a(Some(EXAMPLE_A_DATA.to_string())), 65079);
     }
 
     #[test]
@@ -163,12 +170,12 @@ mod tests {
             info!("Skipping test that requires input not in repository");
             return;
         }
-        assert_eq!(solution_a(Some(INPUT_A_DATA.to_string())), 400410);
+        assert_eq!(solution_a(Some(INPUT_A_DATA.to_string())), 956);
     }
 
     #[test]
     fn test_example_b() {
-        assert_eq!(solution_b(Some(EXAMPLE_B_DATA.to_string())), 1001996);
+        assert_eq!(solution_b(Some(EXAMPLE_B_DATA.to_string())), 65079);
     }
 
     #[test]
@@ -177,6 +184,6 @@ mod tests {
             info!("Skipping test that requires input not in repository");
             return;
         }
-        assert_eq!(solution_b(Some(INPUT_B_DATA.to_string())), 15343601);
+        assert_eq!(solution_b(Some(INPUT_B_DATA.to_string())), 40149);
     }
 }
