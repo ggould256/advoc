@@ -124,9 +124,10 @@ fn compute_value(value: &Value, nodes: &Vec<Node>,
 
 fn solution(source: Option<String>) -> (i64, i64) {
     let nodes = read_input(source);
+    let cache = &mut HashMap::<Label, Signal>::new();
+    let signal_a = compute_value(&Value::Label("a".to_string()), &nodes, cache);
 
-
-    (0, 0)
+    (signal_a as i64, 0)
 }
 
 pub fn solution_a(source: Option<String>) -> i64 {

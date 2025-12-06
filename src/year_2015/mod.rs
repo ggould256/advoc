@@ -4,6 +4,7 @@ mod day3;
 mod day4;
 mod day5;
 mod day6;
+mod day7;
 
 type SolutionFn = fn(Option<String>) -> i64;
 const NAME_TO_FN: &[(&str, SolutionFn)] = &[
@@ -19,6 +20,8 @@ const NAME_TO_FN: &[(&str, SolutionFn)] = &[
     ("day5b", day5::solution_b),
     ("day6a", day6::solution_a),
     ("day6b", day6::solution_b),
+    ("day7a", day7::solution_a),
+    ("day7b", day7::solution_b),
 ];
 
 pub fn run_solution(name: &str, input: Option<String>) -> i64 {
